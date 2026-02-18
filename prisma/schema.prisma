@@ -15,3 +15,105 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+// Modelo de Marcas
+model Marcas {
+  id_marca Int @id @default(autoincrement())
+  nombre_marca String @unique
+  // RE
+  productos Productos[]
+}
+
+// Modelo de Unidad de Medida
+model UnidadMedida {
+  id_unidadMedida Int @id @default(autoincrement())
+  nombre_unidad String @unique
+  abreviatura String @unique
+  // RE
+  productos Productos[]
+}
+
+// Modelo para Usuarios
+model Usuario {
+  id_usuario Int @id @default(autoincrement())
+  alias String @unique
+  nombre String
+  clave String
+  // Relaciones
+  entradas Entradas[]
+  salidas Salidas[]
+}
+
+// Modelo para Productos
+model Productos {
+  id_producto Int @id @default(autoincrement())
+  id_marca Int
+  id_unidadMedida Int
+  codigo String @unique
+  nombre String
+  modelo String?
+  capacidad String?
+  eficiencia String?
+  voltaje String?
+  precio Float
+  cantidad Int
+  cantidad_minima Int
+  activo Boolean @default(true)
+  // RE
+  marca Marcas @relation(fields: [id_marca], references: [id_marca])
+  unidad UnidadMedida @relation(fields: [id_unidadMedida], references: [id_unidadMedida])
+}
+// Coso
+enum TipoIngreso {
+  COMPRA
+  DEVOLUCION
+  OTRO
+}
+// Modelo de entradas
+model Entradas {
+  id_entrada Int @id @default(autoincrement())  
+  id_usuario Int
+  tipo_ingreso TipoIngreso @default(COMPRA)
+  fecha_ingreso DateTime
+  // Relaciones
+  detallesEntradas DetallesEntradas[] // 1 entrada puede tener muchos detalles
+  usuario Usuario @relation(fields: [id_usuario], references: [id_usuario])
+}
+
+// Modelos de detalles de entradas
+model DetallesEntradas {
+  id_detalleEntrada Int @id @default(autoincrement())
+  id_entrada Int
+  id_producto Int
+  id_unidadMedida Int
+  cantidad Int
+  precio_unitario Float
+  precio_total Float 
+  // RE
+  entrada Entradas @relation(fields: [id_entrada], references: [id_entrada])
+}
+
+//  Modelo de Salidas
+model Salidas {
+  id_salida Int @id @default(autoincrement())
+  id_usuario Int
+  fecha_salida DateTime
+  cantidad Int
+  costo_total Float
+  // Relaciones
+  detallesSalidas DetallesSalidas[]
+  usuario Usuario @relation(fields: [id_usuario], references: [id_usuario])
+}
+
+// Modelo de detalles de salidas
+model DetallesSalidas {
+  id_detalleSalida Int @id @default(autoincrement())
+  id_salida Int
+  id_producto Int
+  id_unidadMedida Int
+  cantidad Int
+  precio_unitario Float
+  precio_total Float
+  // Relaciones
+  salida Salidas @relation(fields: [id_salida], references: [id_salida])
+}
