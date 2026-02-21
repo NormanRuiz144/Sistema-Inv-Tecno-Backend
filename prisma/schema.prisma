@@ -12,8 +12,9 @@ generator client {
   output   = "../src/generated/prisma"
 }
 
+// prisma/schema.prisma
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
 }
 
 // Modelo de Marcas
@@ -74,7 +75,7 @@ model Entradas {
   id_entrada Int @id @default(autoincrement())  
   id_usuario Int
   tipo_ingreso TipoIngreso @default(COMPRA)
-  fecha_ingreso DateTime
+  fecha_ingreso DateTime @default(now())
   // Relaciones
   detallesEntradas DetallesEntradas[] // 1 entrada puede tener muchos detalles
   usuario Usuario @relation(fields: [id_usuario], references: [id_usuario])
@@ -97,7 +98,7 @@ model DetallesEntradas {
 model Salidas {
   id_salida Int @id @default(autoincrement())
   id_usuario Int
-  fecha_salida DateTime
+  fecha_salida DateTime @default(now())
   cantidad Int
   costo_total Float
   // Relaciones
