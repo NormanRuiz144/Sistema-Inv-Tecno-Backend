@@ -5,6 +5,7 @@ import cors from "cors";
 import marcaRouter from "./routes/marca.routes";
 import unidadMedidaRouter from "./routes/unidadesM.routes";
 import usuarioRouter from "./routes/usuario.routes";
+import productoRouter from "./routes/producto.routes";
 
 dotenv.config();
 const PORT = process.env.PORT || 3006;
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use("/api", marcaRouter);
 app.use("/api", unidadMedidaRouter);
 app.use("/api", usuarioRouter);
+app.use("/api", productoRouter);
 
 app.listen(PORT, () => {
   console.log(
