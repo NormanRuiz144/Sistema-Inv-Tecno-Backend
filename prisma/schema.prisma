@@ -32,6 +32,8 @@ model UnidadMedida {
   abreviatura String @unique
   // RE
   productos Productos[]
+  detallesEntradas DetallesEntradas[]
+  detallesSalidas DetallesSalidas[]
 }
 
 // Modelo para Usuarios
@@ -50,7 +52,7 @@ model Productos {
   id_producto Int @id @default(autoincrement())
   id_marca Int
   id_unidadMedida Int
-  codigo String @unique
+  codigo String @unique 
   nombre String
   modelo String?
   capacidad String?
@@ -63,6 +65,8 @@ model Productos {
   // RE
   marca Marcas @relation(fields: [id_marca], references: [id_marca])
   unidad UnidadMedida @relation(fields: [id_unidadMedida], references: [id_unidadMedida])
+  detallesEntradas DetallesEntradas[]
+  detallesSalidas DetallesSalidas[]
 }
 // Coso
 enum TipoIngreso {
@@ -76,6 +80,7 @@ model Entradas {
   id_usuario Int
   tipo_ingreso TipoIngreso @default(COMPRA)
   fecha_ingreso DateTime @default(now())
+  anulado Boolean @default(false)
   // Relaciones
   detallesEntradas DetallesEntradas[] // 1 entrada puede tener muchos detalles
   usuario Usuario @relation(fields: [id_usuario], references: [id_usuario])
@@ -92,6 +97,8 @@ model DetallesEntradas {
   precio_total Float 
   // RE
   entrada Entradas @relation(fields: [id_entrada], references: [id_entrada])
+  producto Productos @relation(fields: [id_producto], references: [id_producto])
+  unidadMedida UnidadMedida @relation(fields: [id_unidadMedida], references: [id_unidadMedida])
 }
 
 //  Modelo de Salidas
@@ -101,6 +108,7 @@ model Salidas {
   fecha_salida DateTime @default(now())
   cantidad Int
   costo_total Float
+  anulado Boolean @default(false)
   // Relaciones
   detallesSalidas DetallesSalidas[]
   usuario Usuario @relation(fields: [id_usuario], references: [id_usuario])
@@ -117,4 +125,6 @@ model DetallesSalidas {
   precio_total Float
   // Relaciones
   salida Salidas @relation(fields: [id_salida], references: [id_salida])
+  producto Productos @relation(fields: [id_producto], references: [id_producto])
+  unidadMedida UnidadMedida @relation(fields: [id_unidadMedida], references: [id_unidadMedida])
 }

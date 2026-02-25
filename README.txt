@@ -17,3 +17,7 @@ git push origin nombre-de-la-rama
 # Para manipular Prisma
 - Hacer migraciones
 npx prisma migrate dev --name init
+
+- Generar el cliente
+npx prisma generate
+

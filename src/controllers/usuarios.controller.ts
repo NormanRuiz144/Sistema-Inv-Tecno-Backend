@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import prisma from "../db/client";
+import generateToken from "../utils/generatorC";
 
 // GET
 const getUsuarios = asyncHandler(async (req: Request, res: Response) => {
@@ -97,10 +98,36 @@ const deleteUsuario = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json({ message: "Usuario eliminado correctamente." });
 });
 
+// Funciones de Inicio de sesion
+const loginUsuario = asyncHandler(async (req: Request, res: Response) => {
+  const { alias_usuario, contrasena_usuario } = req.body;
+  const usuario = await prisma.usuario.findFirst({
+    where: { alias: alias_usuario },
+  });
+  if (usuario && usuario.clave === contrasena_usuario) {
+    generateToken(res, usuario.id_usuario);
+    res.status(200).json({
+      id_usuario: usuario.id_usuario,
+      nombre: usuario.nombre,
+      alias: usuario.alias,
+    });
+  } else {
+    res.status(401);
+    throw new Error("Alias o contraseña incorrectos.");
+  }
+});
+
+const logoutUsuario = asyncHandler(async (req: Request, res: Response) => {
+  res.clearCookie("jwt");
+  res.status(200).json({ message: "Sesion cerrada correctamente." });
+});
+
 export {
   getUsuarios,
   getUsuarioById,
   createUsuario,
   updateUsuario,
   deleteUsuario,
+  loginUsuario,
+  logoutUsuario,
 };
