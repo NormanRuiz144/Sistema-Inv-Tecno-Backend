@@ -8,6 +8,7 @@ import unidadMedidaRouter from "./routes/unidadesM.routes";
 import usuarioRouter from "./routes/usuario.routes";
 import productoRouter from "./routes/producto.routes";
 import entradasRouter from "./routes/entradas.routes";
+import salidasRouter from "./routes/salidas.routes";
 
 dotenv.config();
 const PORT = process.env.PORT || 3006;
@@ -23,6 +24,8 @@ app.use("/api", unidadMedidaRouter);
 app.use("/api", usuarioRouter);
 app.use("/api", productoRouter);
 app.use("/api", entradasRouter);
+app.use("/api", entradasRouter);
+app.use("/api", salidasRouter);
 
 app.listen(PORT, () => {
   console.log(

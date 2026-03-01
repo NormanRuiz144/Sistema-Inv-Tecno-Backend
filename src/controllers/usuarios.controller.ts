@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import prisma from "../db/client";
 import generateToken from "../utils/generatorC";
+import { IrecibirUsuario } from "../types/types";
 
 // GET
 const getUsuarios = asyncHandler(async (req: Request, res: Response) => {
@@ -28,7 +29,8 @@ const getUsuarioById = asyncHandler(async (req: Request, res: Response) => {
 });
 // POST
 const createUsuario = asyncHandler(async (req: Request, res: Response) => {
-  const { nombre_usuario, alias_usuario, contrasena_usuario } = req.body;
+  const { nombre_usuario, alias_usuario, contrasena_usuario } =
+    req.body as IrecibirUsuario;
 
   //   comprobar alias
   const alias_exits = await prisma.usuario.findFirst({
@@ -54,7 +56,8 @@ const createUsuario = asyncHandler(async (req: Request, res: Response) => {
 // PUT
 const updateUsuario = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { nombre_usuario, alias_usuario, contrasena_usuario } = req.body;
+  const { nombre_usuario, alias_usuario, contrasena_usuario } =
+    req.body as IrecibirUsuario;
 
   const usuario_exits = await prisma.usuario.findFirst({
     where: { id_usuario: Number(id) },

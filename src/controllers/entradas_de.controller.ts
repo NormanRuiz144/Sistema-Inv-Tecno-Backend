@@ -2,7 +2,8 @@ import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import prisma from "../db/client";
-import { IingresoEntradas, IEntrada } from "../types/types";
+import { IrecibirEntradas, IEntrada } from "../types/types";
+import { findProductById } from "../utils/metodos";
 
 // GET
 const getEntradas_Detalles = asyncHandler(
@@ -11,6 +12,9 @@ const getEntradas_Detalles = asyncHandler(
     if (!entradas) {
       res.status(404);
       throw new Error("Error al intentar cargar las entradas.");
+    }
+    if (entradas.length == 0) {
+      res.status(200).json({ message: "No hay entradas registradas." });
     } else {
       res.status(200).json(entradas);
     }
@@ -36,7 +40,7 @@ const getEntradasById = asyncHandler(async (req: Request, res: Response) => {
 // POST
 const createEntrada = asyncHandler(async (req: Request, res: Response) => {
   let token = req.cookies.jwt;
-  const { detallesEntrada, tipoIngreso } = req.body as IingresoEntradas;
+  const { detallesEntrada, tipoIngreso } = req.body as IrecibirEntradas;
 
   //   Decodificar el token
   if (token) {
@@ -92,7 +96,52 @@ const createEntrada = asyncHandler(async (req: Request, res: Response) => {
 // PUT
 const updateEntrada = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { tipoIngreso } = req.body as IingresoEntradas;
+  const { tipoIngreso, detallesEntrada } = req.body as IrecibirEntradas;
+
+  // ciclo para actualizar los productos
+  for (const detalle of detallesEntrada) {
+    const productoBuscado = await findProductById(res, detalle.id_producto);
+    // Comparar la cantidad nueva para actualizar el stock
+    let cantidadActual = detalle.cantidad;
+    const cantidadAnterior = await prisma.detallesEntradas.findFirst({
+      where: { id_entrada: Number(id), id_producto: detalle.id_producto },
+    });
+
+    const detalleActualizado = await prisma.detallesEntradas.update({
+      where: { id_detalleEntrada: Number(cantidadAnterior?.id_detalleEntrada) },
+      data: {
+        cantidad: cantidadActual,
+        precio_unitario: productoBuscado?.precio,
+        precio_total: cantidadActual * (productoBuscado?.precio || 0),
+      },
+    });
+
+    if (detalleActualizado) {
+      try {
+        // Para que la cantidad no sea negativa
+        if (cantidadActual > cantidadAnterior!.cantidad) {
+          const diferencia = cantidadActual - cantidadAnterior!.cantidad;
+          await prisma.productos.update({
+            where: { id_producto: detalle.id_producto },
+            data: {
+              cantidad: { increment: diferencia },
+            },
+          });
+        } else if (cantidadActual < cantidadAnterior!.cantidad) {
+          const diferencia = cantidadAnterior!.cantidad - cantidadActual;
+          await prisma.productos.update({
+            where: { id_producto: detalle.id_producto },
+            data: {
+              cantidad: { decrement: diferencia },
+            },
+          });
+        }
+      } catch (error) {
+        console.log("se no se encuentra la cantidad");
+        console.log(error);
+      }
+    }
+  }
   const entradaActualizada = await prisma.entradas.update({
     where: { id_entrada: Number(id) },
     data: {
