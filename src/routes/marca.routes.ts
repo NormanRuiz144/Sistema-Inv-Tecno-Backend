@@ -5,13 +5,14 @@ import {
   updateMarca,
   deleteMarca,
 } from "../controllers/marca.controller";
+import { authMiddleware } from "../middleware/middleware";
 
 const router = Router();
 
 // Rutas
-router.get("/marcas", getMarca);
-router.post("/marcas", createMarca);
-router.put("/marcas/:id", updateMarca);
-router.delete("/marcas/:id", deleteMarca);
+router.get("/marcas", authMiddleware, getMarca);
+router.post("/marcas", authMiddleware, createMarca);
+router.put("/marcas/:id", authMiddleware, updateMarca);
+router.delete("/marcas/:id", authMiddleware, deleteMarca);
 
 export default router;

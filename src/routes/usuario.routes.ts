@@ -8,16 +8,17 @@ import {
   loginUsuario,
   logoutUsuario,
 } from "../controllers/usuarios.controller";
+import { authMiddleware } from "../middleware/middleware";
 
 const router = Router();
 
 router.post("/usuarios/login", loginUsuario);
 router.post("/usuarios/logout", logoutUsuario);
 
-router.get("/usuarios", getUsuarios);
-router.get("/usuarios/:id", getUsuarioById);
-router.post("/usuarios", createUsuario);
-router.put("/usuarios/:id", updateUsuario);
-router.delete("/usuarios/:id", deleteUsuario);
+router.get("/usuarios", authMiddleware, getUsuarios);
+router.get("/usuarios/:id", authMiddleware, getUsuarioById);
+router.post("/usuarios", authMiddleware, createUsuario);
+router.put("/usuarios/:id", authMiddleware, updateUsuario);
+router.delete("/usuarios/:id", authMiddleware, deleteUsuario);
 
 export default router;

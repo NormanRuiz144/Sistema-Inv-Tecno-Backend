@@ -5,13 +5,14 @@ import {
   updateUnidadM,
   deleteUnidadM,
 } from "../controllers/unidadesM.controller";
+import { authMiddleware } from "../middleware/middleware";
 
 const router = Router();
 
 // Rutas
-router.get("/unidadesMedidas", getUnidadM);
-router.post("/unidadesMedidas", createUnidadM);
-router.put("/unidadesMedidas/:id", updateUnidadM);
-router.delete("/unidadesMedidas/:id", deleteUnidadM);
+router.get("/unidadesMedidas", authMiddleware, getUnidadM);
+router.post("/unidadesMedidas", authMiddleware, createUnidadM);
+router.put("/unidadesMedidas/:id", authMiddleware, updateUnidadM);
+router.delete("/unidadesMedidas/:id", authMiddleware, deleteUnidadM);
 
 export default router;

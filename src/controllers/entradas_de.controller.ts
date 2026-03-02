@@ -101,7 +101,11 @@ const updateEntrada = asyncHandler(async (req: Request, res: Response) => {
   // ciclo para actualizar los productos
   for (const detalle of detallesEntrada) {
     const productoBuscado = await findProductById(res, detalle.id_producto);
-    // Comparar la cantidad nueva para actualizar el stock
+    if (!productoBuscado) {
+      res.status(400).json({ message: "El producto no fue encontrado." });
+      return;
+    }
+    // Cantidades para actualizar el stock
     let cantidadActual = detalle.cantidad;
     const cantidadAnterior = await prisma.detallesEntradas.findFirst({
       where: { id_entrada: Number(id), id_producto: detalle.id_producto },
@@ -137,8 +141,7 @@ const updateEntrada = asyncHandler(async (req: Request, res: Response) => {
           });
         }
       } catch (error) {
-        console.log("se no se encuentra la cantidad");
-        console.log(error);
+        console.log("Error al actualizar el stock del producto:", error);
       }
     }
   }

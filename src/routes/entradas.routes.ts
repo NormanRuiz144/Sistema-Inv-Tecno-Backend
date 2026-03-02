@@ -6,14 +6,15 @@ import {
   updateEntrada,
   deleteEntrada,
 } from "../controllers/entradas_de.controller";
+import { authMiddleware } from "../middleware/middleware";
 
 const router = Router();
 
 // Rutas
-router.get("/entradas", getEntradas_Detalles);
-router.get("/entradas/:id", getEntradasById);
-router.post("/entradas", createEntrada);
-router.put("/entradas/:id", updateEntrada);
-router.delete("/entradas/:id", deleteEntrada);
+router.get("/entradas", authMiddleware, getEntradas_Detalles);
+router.get("/entradas/:id", authMiddleware, getEntradasById);
+router.post("/entradas", authMiddleware, createEntrada);
+router.put("/entradas/:id", authMiddleware, updateEntrada);
+router.delete("/entradas/:id", authMiddleware, deleteEntrada);
 
 export default router;

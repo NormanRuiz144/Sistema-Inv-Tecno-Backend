@@ -6,14 +6,15 @@ import {
   updateSalida,
   deleteSalida,
 } from "../controllers/salidas_de.controller";
+import { authMiddleware } from "../middleware/middleware";
 
 const router = Router();
 
 // Rutas
-router.get("/salidas", getSalidas);
-router.get("/salidas/:id", getSalidasById);
-router.post("/salidas", createSalida);
-router.put("/salidas/:id", updateSalida);
-router.delete("/salidas/:id", deleteSalida);
+router.get("/salidas", authMiddleware, getSalidas);
+router.get("/salidas/:id", authMiddleware, getSalidasById);
+router.post("/salidas", authMiddleware, createSalida);
+router.put("/salidas/:id", authMiddleware, updateSalida);
+router.delete("/salidas/:id", authMiddleware, deleteSalida);
 
 export default router;

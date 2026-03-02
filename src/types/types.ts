@@ -1,6 +1,11 @@
-// import { TipoIngreso } from "../generated/prisma/models/Entradas";
-
 // Tipos
+export interface IUsuario {
+  id_usuario: number;
+  alias: string;
+  nombre: string;
+  clave: string;
+}
+
 export interface IrecibirUsuario {
   nombre_usuario: string;
   alias_usuario: string;
